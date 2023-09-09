@@ -91,7 +91,8 @@ console.log("Об'єкт: Biography", Biography);
 // Перевіримо чи являється Novel прототипом Biography та виведемо в консоль
 //console.log("Прототип Об'єкту: Biography", Object.getPrototypeOf(Biography));
 console.log(Object.getPrototypeOf(Biography) === Novel);
-
+//console.log(Novel.isPrototypeOf(Biography));
+//========
 // 4. Інкапсуляція властивості та додання властивості
 /*
  * Об'єкт: ScienceBook
@@ -106,43 +107,59 @@ const ScienceBook = Object.create(Book);
 // Зробимо щоб 'info' не можно було видалити або змінити, перевіримо і
 // спробуємо присвоїти ій будь яке значення(це потрібно робити ззовні defineProperty),
 // Отримаємо помилку Cannot assign to read only property 'info' of object '#<Object>'
+// Object.defineProperty(ScienceBook, "info", {
+//   value: "написана в 1915 році",
+//   writable: false,
+//   configurable: false,
+// });
+// try {
+//   ScienceBook.info = "написана в 19 році";
+// } catch (error) {
+//   console.log("Помилка при спробі змінити 'info':", error.message);
+// }
 Object.defineProperty(ScienceBook, "info", {
-  value: "написана в 1915 році",
-  writable: false,
   configurable: false,
+  // Зробимо щоб 'info' не можно було видалити або змінити, перевіримо і спробуємо присвоїти ій будь яке значення (це потрібно робити ззовні defineProperty),
+  // Отримаємо помилку Cannot assign to read only property 'info' of object '#Object'
+  // Далі створюємо сетер який присвоє властивості info значення яке отримує при виклику, помилку більше не отримуємо але при спробі вивести значення info отримуємо undefined
+  set(value) {
+    this._info = value;
+  },
+  // Створимо гетер який буде нам повертати рядок: Про книгу title: info
+  // тепер все виводить коректно
+  get() {
+    return `Про книгу ${this.title}: ${this._info}`;
+  },
 });
-try {
-  ScienceBook.info = "написана в 19 році";
-} catch (error) {
-  console.log("Помилка при спробі змінити 'info':", error.message);
-}
-
+ScienceBook.title = "Фізика 101";
+ScienceBook.author = "Альберт Ейнштейн";
+ScienceBook.info = "написана в 1915 році";
 // Далі створюємо сетер який присвоє властивості info значення яке отримує
 //при виклику, помилку більше не отримуємо але при спробі вивести значення
 //info отримуємо undefined
-Object.defineProperty(ScienceBook, "setInfo", {
-  set: function (value) {
-    this.info = value;
-  },
-});
+// Object.defineProperty(ScienceBook, "setInfo", {
+//   set: function (value) {
+//     this.info = value;
+//   },
+// });
 
 //ScienceBook.setInfo = "написана в 19 році";
 
 // Створимо гетер який буде нам повертати рядок: Про книгу <title>: <info>
 // тепер все виводить коректно
-Object.defineProperty(ScienceBook, "getInfo", {
-  get: function () {
-    return `Про книгу ${this.title}: ${this.info}`;
-  },
-});
+// Object.defineProperty(ScienceBook, "getInfo", {
+//   get: function () {
+//     return `Про книгу ${this.title}: ${this.info}`;
+//   },
+// });
 // Заповнюємо об'єкт
 // | Властивість | Значення             |
 // |-------------|----------------------|
 // | title       | "Фізика 101"         |
 // | author      | "Альберт Ейнштейн"   |
 // | info        | написана в 1915 році |
-ScienceBook.title = "Фізика 101";
-ScienceBook.author = "Альберт Ейнштейн";
+// ScienceBook.title = "Фізика 101";
+// ScienceBook.author = "Альберт Ейнштейн";
 console.log("Завдання: 4 ==============================");
 // Виводимо в консоль властивість info
 console.log(`Про книгу ${ScienceBook.title}: ${ScienceBook.info}`);
